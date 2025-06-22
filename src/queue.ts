@@ -15,7 +15,7 @@ export class Queue {
   async queueSongs(urls: string[]) {
     for (let i = 0; i < urls.length; i++) {
       const url = urls[i];
-      const track = await this.sc.tracks.getAlt(url);
+      const track = await this.sc.tracks.getAlt(url); // getAlt() is necessary when using private Soundcloud URLs
       this.urls.set(track.id, track);
       console.log(`[Queue] Queued ${track.user.username} - ${track.title}`);
     }
