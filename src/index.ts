@@ -100,8 +100,13 @@ client.on(Events.ClientReady, async (c) => {
         console.log(`[Connection] ${oldState.status} -> ${newState.status}`);
     });
 
-    connection.on("error", (err) => {
+    connection.on("error", async (err) => {
         console.error(`[Connection] ERROR: ${err}`);
+
+        // Rejoin
+        console.log("[Connection] Attempting to rejoin");
+        const success = connection.rejoin(); // undocumented
+        console.debug(`[Connection] REJOIN: ${success}`);
     });
 
     connection.on("debug", (deb) => {
@@ -113,8 +118,8 @@ client.on(Events.ClientReady, async (c) => {
         try {
             console.log("[Connection] Recovering ...");
             await Promise.race([
-                entersState(connection, VoiceConnectionStatus.Signalling, 5_000),
-                entersState(connection, VoiceConnectionStatus.Connecting, 5_000),
+                entersState(connection, VoiceConnectionStatus.Signalling, 10_000),
+                entersState(connection, VoiceConnectionStatus.Connecting, 10_000),
             ]);
             // Seems to be reconnecting to a new channel - ignore disconnect
         } catch {
@@ -122,8 +127,7 @@ client.on(Events.ClientReady, async (c) => {
             console.log("[Connection] Disconnect timeout! Connection destroyed");
             connection.destroy();
         }
-    },
-    );
+    });
 
     // Connection ready
     connection.on(VoiceConnectionStatus.Ready, async (_oldState, _newState) => {
