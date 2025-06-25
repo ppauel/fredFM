@@ -106,11 +106,11 @@ client.on(Events.ClientReady, async (c) => {
         // Rejoin
         console.log("[Connection] Attempting to rejoin");
         const success = connection.rejoin(); // undocumented
-        console.debug(`[Connection] REJOIN: ${success}`);
+        console.log(`[Connection] REJOIN: ${success}`);
     });
 
     connection.on("debug", (deb) => {
-        console.debug(`[Connection] DEBUG: ${deb}`);
+        process.env.DEBUG && console.debug(`[Connection] DEBUG: ${deb}`);
     });
 
     // Handling disconnects
