@@ -12,6 +12,7 @@ import {
     Events,
     GatewayIntentBits as Intents,
     Options,
+    VoiceConnectionStates,
 } from "discord.js";
 import { connectToVoiceChannel } from "./connection";
 import { config } from "dotenv";
@@ -96,8 +97,15 @@ client.on(Events.ClientReady, async (c) => {
         queue.playNext(player);
     });
 
-    connection.on("stateChange", (oldState, newState) => {
+    connection.on("stateChange", async (oldState, newState) => {
         console.log(`[Connection] ${oldState.status} -> ${newState.status}`);
+
+        console.log("[Connection] Recovering ...");
+        await Promise.race([
+            entersState(connection, VoiceConnectionStatus.Ready, 10_000),
+        ]).catch(e => {
+            throw new Error(`[Connection] Unable to reconnect: ${e}`); // TODO: Error handling / rejoin?
+        });
     });
 
     connection.on("error", async (err) => {
