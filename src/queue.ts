@@ -37,7 +37,7 @@ export class Queue {
             this.queue.delete(this.current);
         }
 
-        this.current = this.queue.randomKey();
+        this.current = this.queue.firstKey();
 
         if (!this.current) {
             console.log("[Queue] Restarting queue");
